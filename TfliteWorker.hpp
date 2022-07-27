@@ -54,9 +54,6 @@ private:
     std::unique_ptr<tflite::FlatBufferModel> tflite_model;
     std::string error_message_;
 
-
-    Mode mode_selected=PE;
-
     // std::vector<float> output_tensor;
     int requried_width, requried_height, requried_channels;
     size_t requried_size_t;

@@ -146,16 +146,9 @@ bool TfliteWorker::inference(const cv::Mat &frame, std::vector<float> &output_te
         }
     }
 // get item_stride
-    /* Set the item stride based on demo mode being used */
-    if (this->mode_selected == PE)
-    {
-        item_stride = output_tensor_count.takeFirst();
-    }
-    else
-    {
-        /* The final output is unused for object detection/recognition models */
-        output_tensor_count.removeLast();
-        item_stride = output_tensor_count.takeLast();
-    }
+
+    output_tensor_count.removeLast();
+    item_stride = output_tensor_count.takeLast();
+ 
     return true;
 }
