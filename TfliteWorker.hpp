@@ -59,7 +59,6 @@ private:
     size_t requried_size_t;
 
 
-
 public:
     bool inference(const cv::Mat &frame,std::vector<float> &output_tensort,int &item_stride,int &time_cost);
     std::string error_message(){

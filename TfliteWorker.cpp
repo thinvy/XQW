@@ -147,8 +147,8 @@ bool TfliteWorker::inference(const cv::Mat &frame, std::vector<float> &output_te
     }
 // get item_stride
 
-    output_tensor_count.removeLast();
-    item_stride = output_tensor_count.takeLast();
+    output_tensor_count.pop_back();
+    item_stride = output_tensor_count.pop_back();
  
     return true;
 }
