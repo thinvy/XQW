@@ -1,9 +1,10 @@
 #ifndef CAMERA_HPP_
 #define CAMERA_HPP_
-#include "QObject"
+
 #include "opencv2/opencv.hpp"
 #include <iostream>
 
+namespace Foolish {
 struct CameraParam
 {
     int width = 640;
@@ -13,12 +14,15 @@ struct CameraParam
 
 class Camera
 {
-
 public:
+    virtual void setCamera(CameraParam &param) = 0;
     virtual bool openCamera(std::string &camera_path) = 0;
     virtual bool closeCamera() = 0;
-    virtual bool getFrame(cv::Mat &frame) = 0;
-    virtual void setCamera(CameraParam &param) = 0;
+    virtual bool process() = 0;
+    virtual bool getCvFrame(cv::Mat &frame) = 0;
+    virtual const unsigned char *getRGBFrame() = 0;
+    virtual const unsigned char *getYUVFrame() = 0;
+    virtual void getErrorMessage(std::string & error_msg) = 0;
 };
 
 class CameraCV : public Camera
@@ -34,7 +38,7 @@ public:
         cap.release();
         return (!cap.isOpened());
     }
-    bool getFrame(cv::Mat &frame) override
+    bool getCvFrame(cv::Mat &frame) override
     {
         cap.read(frame);
         return (!frame.empty());
@@ -54,12 +58,73 @@ private:
 
 class CameraGS : public Camera
 {
-
+public:
     bool openCamera(std::string &camera_path) override;
     bool closeCamera() override;
-    bool getFrame(cv::Mat &frame) override;
+    bool getCvFrame(cv::Mat &frame) override;
     void setCamera(CameraParam &param) override;
     CameraGS();
 };
+
+//
+// V4L2
+//
+
+#define FREAM_BUFFER_NUM 4 
+
+class CameraV4L2 : public Camera
+{
+public:
+    void setCamera(CameraParam &param) override {
+        param_.width = param.width;
+        param_.height = param.height;
+        param_.exporsure = param.exporsure;
+    }
+    bool openCamera(std::string &camera_path) override;
+    bool closeCamera() override;
+    bool process() override;
+    bool getCvFrame(cv::Mat &frame) override {
+        frame = cv::Mat(param_.width, param_.height, CV_8UC3, frame_rgb_);
+        return (!frame.empty());
+    }
+    const unsigned char *getRGBFrame() override {
+        return frame_rgb_;
+    }
+    const unsigned char *getYUVFrame() override {
+        return frame_yuv_;
+    }
+    void getErrorMessage(std::string & error_msg) override {
+        error_msg = error_message_;
+    }
+    
+    CameraV4L2() {fd_ = -1;}
+
+private:
+    std::string error_message_;
+
+private:
+    cv::Mat frame_cv_mat_;
+    unsigned char frame_rgb_[640*480*3];
+    unsigned char frame_yuv_[640*480*2];
+    
+private:
+    struct CameraParam param_;
+
+private:
+    void yuv_to_rgb(unsigned char* yuv, unsigned char *rgb);
+
+private:
+    int fd_;
+    struct FrameBuffer {
+        void* start;
+        size_t length;
+    } frame_buffers_[FREAM_BUFFER_NUM];
+
+
+};
+
+}
+
+
 
 #endif
