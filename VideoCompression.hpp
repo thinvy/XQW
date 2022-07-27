@@ -1,0 +1,6 @@
+#ifndef VIDEOCOMPRESSION_HPP_
+#define VIDEOCOMPRESSION_HPP_
+
+
+
+#endif
