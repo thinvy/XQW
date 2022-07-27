@@ -25,7 +25,7 @@ bool CameraV4L2::openCamera(std::string & camera_path)
 
     // open camera
 
-    fd_ = open(camera_path.c_str(), O_RDWR, 0777);
+    fd_ = open(camera_path.c_str(), O_RDWR , 0777);
     if (fd_ < 0) {
         error_message_ = "error : camera open failed";
         return false;
@@ -110,6 +110,15 @@ bool CameraV4L2::openCamera(std::string & camera_path)
     }
 
 
+    
+
+    error_message_ = "NONE";
+    return true;
+}
+
+
+bool CameraV4L2::process() 
+{
     // camera open 
     enum v4l2_buf_type type;
     for(unsigned int i = 0; i < FREAM_BUFFER_NUM; i++) {
@@ -125,27 +134,20 @@ bool CameraV4L2::openCamera(std::string & camera_path)
     if(ioctl(fd_, VIDIOC_STREAMON, &type) == -1) {
         error_message_ = "error : camera stream on error";
     }
-
-    error_message_ = "NONE";
-    return true;
-}
-
-
-bool CameraV4L2::process() 
-{
+    
     struct v4l2_buffer buf;
     memset(&buf, 0, sizeof(buf));
     buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     buf.memory = V4L2_MEMORY_MMAP;
-    if(ioctl(fd_, VIDIOC_DQBUF, &buf) == -1) {
+
+    if(ioctl(fd_, VIDIOC_DQBUF, &buf) < 0) {
         error_message_ = "error : camera dqbuf error";
         return false;
     }
+
     memset(frame_yuv_, 0, sizeof(frame_yuv_));
-    std::cout << "2" << std::endl;
-    std::cout << buf.bytesused << std::endl;
     memcpy(frame_yuv_, frame_buffers_[buf.index].start, buf.bytesused);
-    std::cout << "3" << std::endl;
+    // std::cout << "buffer index : " << buf.index << std::endl;
     yuv_to_rgb(frame_yuv_, frame_rgb_);
 
     error_message_ = "NONE";

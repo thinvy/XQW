@@ -15,7 +15,7 @@ int main()
     camera->setCamera(camera_param);
 
     
-    std::string camera_path("/dev/video0");
+    std::string camera_path("/dev/video2");
     if (camera->openCamera(camera_path) == false) {
         std::string error_msg;
         camera->getErrorMessage(error_msg);
@@ -25,22 +25,27 @@ int main()
 
 
     while (true) {
-        std::cout << "1" << std::endl;
+
+
+
         if (camera->process() == false) {
             std::string error_msg;
             camera->getErrorMessage(error_msg);
             std::cout << error_msg << std::endl;
-            return 1;
+            // return 1;
+            continue;
         }
-        std::cout << "1" << std::endl;
         
+
         cv::Mat frame;
 
         camera->getCvFrame(frame);
 
+        // std::cout << "rows: " << frame.rows << " cols: " << frame.cols <<std::endl;
+
         cv::imshow("camera test", frame);
 
-        if (cv::waitKey(30) == 27) {
+        if (cv::waitKey(1) == 27) {
             break;
         }
     }

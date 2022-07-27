@@ -70,7 +70,7 @@ public:
 // V4L2
 //
 
-#define FREAM_BUFFER_NUM 4 
+#define FREAM_BUFFER_NUM 1
 
 class CameraV4L2 : public Camera
 {
@@ -84,7 +84,7 @@ public:
     bool closeCamera() override;
     bool process() override;
     bool getCvFrame(cv::Mat &frame) override {
-        frame = cv::Mat(param_.width, param_.height, CV_8UC3, frame_rgb_);
+        frame = cv::Mat(param_.height, param_.width, CV_8UC3, frame_rgb_);
         return (!frame.empty());
     }
     const unsigned char *getRGBFrame() override {
