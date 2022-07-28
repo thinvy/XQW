@@ -12,3 +12,4 @@ include_directories(
 add_executable(camera_demo CameraDemo.cpp ../../Camera.cpp)
  
 target_link_libraries(camera_demo ${OpenCV_LIBS})
+
