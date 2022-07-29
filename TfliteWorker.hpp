@@ -28,9 +28,7 @@
 #include <armnn/Utils.hpp>
 #include <delegate/armnn_delegate.hpp>
 #include <delegate/DelegateOptions.hpp>
-#ifdef DUNFELL
-#include "tensorflow/lite/delegates/xnnpack/xnnpack_delegate.h"
-#endif
+
 
 
 #define WARNING_IMAGE_RETREIVAL "Received invalid image path, could not run inference"
@@ -40,31 +38,36 @@
 
 
 
-enum Delegate { armNN, xnnpack, none };
+enum Delegate { armNN, none };
 
 class TfliteWorker 
 {
 
 public:
-    TfliteWorker(const std::string &modle_path, Delegate delegate_type,const  int defaultThreads);
+    // choose  delegate_type to selct model acceleration framework
+    TfliteWorker(const std::string &modle_path, Delegate delegate_type=armNN,const  int defaultThreads=1);
     ~TfliteWorker();
 
 private:
+    // tflite interpreter for model inference
     std::unique_ptr<tflite::Interpreter> tflite_interpreter;
     std::unique_ptr<tflite::FlatBufferModel> tflite_model;
+
+    // error messafe
     std::string error_message_;
 
     // std::vector<float> output_tensor;
     int requried_width, requried_height, requried_channels;
     size_t requried_size_t;
 
-
 public:
+    // start inference ,return flase and error_message if faied 
     bool inference(const cv::Mat &frame,std::vector<float> &output_tensort,int &item_stride,int &time_cost);
+    
     std::string error_message(){
         return this->error_message_;
     }
-
+    // errorCalback : To do (may become a log record )
     void errorCalback(){
 
     }
