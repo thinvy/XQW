@@ -2,11 +2,13 @@
 #include <memory>
 #include "../../Camera.hpp"
 
+#include <unistd.h>
+
 
 int main()
 {
     std::shared_ptr<Foolish::Camera> camera;
-    camera = std::make_shared<Foolish::CameraV4L2>();
+    camera = std::make_shared<Foolish::CameraCV>();
 
     Foolish::CameraParam camera_param;
     camera_param.width = 640;
@@ -23,7 +25,8 @@ int main()
         std::cout << error_msg << std::endl;
         return 1;
     }
-
+    int i=0;
+    int timecost_av=0;
     while (true)
     {
 
@@ -45,14 +48,22 @@ int main()
         std::chrono::high_resolution_clock::time_point stop_time = std::chrono::high_resolution_clock::now();
 
         int time_cost = int(std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - start_time).count());
-        std::cout<<"the time cost is : "<<time_cost<<std::endl;
+        timecost_av+=time_cost;
+        i+=1;
+        std::cout<<"the time cost is : "<<timecost_av/i<<std::endl;
         // std::cout << "rows: " << frame.rows << " cols: " << frame.cols << std::endl;
+        
+        // cv::imshow("camera test", frame);
 
-        cv::imshow("camera test", frame);
-
-        if (cv::waitKey(1) == 27) {
-            break;
-        }
+        usleep(1000);
+        // if (cv::waitKey(1) == 27) {
+        //     break;
+        // }
+        // std::string a="./img/";
+        // std::string b=std::to_string(i);
+        // std::string c=".png";
+        // if((i++)%7==0)
+        //     cv::imwrite(a+b+c,frame);
         std::cout << std::endl;
     }
 
