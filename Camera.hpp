@@ -36,6 +36,12 @@ namespace Foolish
         bool openCamera(std::string &camera_path) override
         {
             cap.open(camera_path);
+            cap.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
+            cap.set(cv::CAP_PROP_FRAME_WIDTH, param_.width);
+            cap.set(cv::CAP_PROP_FRAME_HEIGHT, param_.height);
+            cap.set(cv::CAP_PROP_FPS, 120);
+            // cap.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
+            // cap.open(camera_path);
             return cap.isOpened();
         }
         bool closeCamera() override
@@ -50,15 +56,20 @@ namespace Foolish
         }
         void setCamera(CameraParam &param) override
         {
-            cap.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('U', 'Y', 'V', 'Y'));
-            cap.set(cv::CAP_PROP_FRAME_WIDTH, param.width);
-            cap.set(cv::CAP_PROP_FRAME_HEIGHT, param.height);
-            cap.set(cv::CAP_PROP_AUTO_EXPOSURE, param.exporsure);
+            param_.width = param.width;
+            param_.height = param.height;
+            param_.exporsure = param.exporsure;
+            // cap.set(cv::CAP_PROP_FRAME_WIDTH, param.width);
+            // cap.set(cv::CAP_PROP_FRAME_HEIGHT, param.height);
+            // cap.set(cv::CAP_PROP_FPS, 60);
+            // cap.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
+            // cap.set(cv::CAP_PROP_AUTO_EXPOSURE, param.exporsure);
         }
         CameraCV() {}
 
     private:
         cv::VideoCapture cap;
+        CameraParam param_;
     };
 
     class CameraGS : public Camera
@@ -75,7 +86,7 @@ namespace Foolish
     // V4L2
     //
 
-#define FREAM_BUFFER_NUM 4
+#define FREAM_BUFFER_NUM 10
 
     class CameraV4L2 : public Camera
     {

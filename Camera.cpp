@@ -13,7 +13,7 @@
 
 namespace Foolish
 {
-
+    
     bool CameraV4L2::openCamera(std::string &camera_path)
     {
         if (camera_path.empty())
@@ -63,7 +63,8 @@ namespace Foolish
         fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         fmt.fmt.pix.width = param_.width;
         fmt.fmt.pix.height = param_.height;
-        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
+        // fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_YUYV;
+        fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_MJPEG;
         fmt.fmt.pix.field = V4L2_FIELD_INTERLACED;
         if (ioctl(fd_, VIDIOC_S_FMT, &fmt) == -1)
         {
@@ -74,14 +75,19 @@ namespace Foolish
         struct v4l2_streamparm parm;
         memset(&parm, 0, sizeof(parm));
         parm.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-        parm.parm.capture.timeperframe.numerator = 1;
-        parm.parm.capture.timeperframe.denominator = 10;
+        parm.parm.capture.timeperframe.numerator = 513;
+        parm.parm.capture.timeperframe.denominator = 61612;
         parm.parm.capture.capturemode = 0;
         if (ioctl(fd_, VIDIOC_S_PARM, &parm) == -1)
         {
             error_message_ = "error : camera set streamparm error";
             return false;
         }
+
+        std::cout<<"set camera param : " << std::endl;
+        std::cout<< parm.parm.capture.timeperframe.numerator  << std::endl;
+        std::cout<< parm.parm.capture.timeperframe.denominator << std::endl;
+
         // 5. set camera buffer
         struct v4l2_requestbuffers req;
         memset(&req, 0, sizeof(req));
@@ -141,14 +147,6 @@ namespace Foolish
             }
         }
 
-        error_message_ = "NONE";
-        return true;
-    }
-
-    bool CameraV4L2::process()
-    {
-        std::chrono::high_resolution_clock::time_point start_time = std::chrono::high_resolution_clock::now();
-
         // camera open
 
         enum v4l2_buf_type type;
@@ -158,10 +156,24 @@ namespace Foolish
             error_message_ = "error : camera stream on error";
         }
 
+        error_message_ = "NONE";
+        return true;
+    }
+
+    bool CameraV4L2::process()
+    {
+        
+
+        std::chrono::high_resolution_clock::time_point start_time = std::chrono::high_resolution_clock::now();
+
         struct v4l2_buffer buf;
         memset(&buf, 0, sizeof(buf));
         buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
         buf.memory = V4L2_MEMORY_MMAP;
+
+        
+        
+
         std::chrono::high_resolution_clock::time_point stop_time = std::chrono::high_resolution_clock::now();
 
         if (ioctl(fd_, VIDIOC_DQBUF, &buf) < 0)
@@ -169,23 +181,38 @@ namespace Foolish
             error_message_ = "error : camera dqbuf error";
             return false;
         }
-        std::chrono::high_resolution_clock::time_point stop_time1 = std::chrono::high_resolution_clock::now();
-        memset(frame_yuv_, 0, sizeof(frame_yuv_));
-        memcpy(frame_yuv_, frame_buffers_[buf.index].start, buf.bytesused);
-        std::cout << "buffer index : " << buf.index << std::endl;
-        yuv_to_rgb(frame_yuv_, frame_rgb_);
 
+        std::chrono::high_resolution_clock::time_point stop_time1 = std::chrono::high_resolution_clock::now();
+        
+        // usleep(40000);
+
+        memset(frame_yuv_, 0, sizeof(frame_yuv_));
+        std::cout << "bytes : " << buf.bytesused << std::endl;
+        // memcpy(frame_yuv_, frame_buffers_[buf.index].start, buf.bytesused);
+        // memcpy(frame_yuv_, frame_buffers_[buf.index].start, sizeof(frame_yuv_));
+        // yuv_to_rgb(frame_yuv_, frame_rgb_);
+        // yuv_to_rgb((unsigned char *)frame_buffers_[buf.index].start, frame_rgb_);
+        
+        // switch (buf.index) {
+        //     case 0:
+        //     case 1:
+        //     case 2:
+        //     case 3:
+        //     case 4:
+        // }
         if (ioctl(fd_, VIDIOC_QBUF, &buf) == -1)
         {
             error_message_ = "error : camera qbuf error";
         }
-
+        
         std::chrono::high_resolution_clock::time_point stop_time2 = std::chrono::high_resolution_clock::now();
+
+        
 
         int time_cost0 = int(std::chrono::duration_cast<std::chrono::milliseconds>(stop_time - start_time).count());
         int time_cost1 = int(std::chrono::duration_cast<std::chrono::milliseconds>(stop_time1 - stop_time).count());
         int time_cost2 = int(std::chrono::duration_cast<std::chrono::milliseconds>(stop_time2 - stop_time1).count());
-
+        std::cout << "buffer index : " << buf.index << std::endl;
         std::cout << "the time cost is : " << time_cost0 << std::endl;
         std::cout << "the time cost1 is : " << time_cost1 << std::endl;
         std::cout << "the time cost2 is : " << time_cost2 << std::endl;
