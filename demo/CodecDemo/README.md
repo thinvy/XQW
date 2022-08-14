@@ -25,9 +25,17 @@ cd bin
 ./VideoWriterDemo ../../input/input.mp4 ../../input/output.mp4
 # DEMO3 : 读取相机(cv::VideoCapture >> cv::Mat)并储存在另一个视频文件(mp4文件h264编码)中
 ./CameraDemo /dev/video0 ../../input/output1.mp4
+
+# DEMO3 : 读取相机(cv::VideoCapture >> cv::Mat)并通过H264编码RTP打包UDP推流
+# @param1 : uvc相机路径
+# @param2 : 目标主机的ip地址(可以是本机)
+# @param3 : 目标主机的端口
+./CameraDemo /dev/video0 192.168.1.126 5004
+# 可以在在目标主机上(安装了gstreamer)通过以下指令预览视频流(注意端口要一样)
+gst-launch-1.0 udpsrc port=5004 caps = "application/x-rtp, media=video, clock-rate=90000, encoding-name=H264, payload=96" ! rtph264depay ! avdec_h264 ! decodebin ! xvimagesink
 ```
 ## 注意
 * 检查文件路径和相机名称
 * 设置相机帧率和分辨率在可用范围内，如果得到的Mat的格式和设置的不一样会导致输出的视频格式出错(绿屏)，此外建议帧率先固定在30fps，因为mp4的时间辍我是递增0.04s的无法通过调整帧率修改(bug...)
-* 在RZ/G2L板卡上部署时可以尝试将编解码器由`x264enc``avdec_h264`替换为带硬件加速的`omxh264enc``omxh264dec`（参考RZ的仓库）
+* 在RZ/G2L板卡上部署时可以尝试将编解码器由`x264enc`和`avdec_h264`替换为带硬件加速的`omxh264enc`和`omxh264dec`（参考RZ的仓库）
 
