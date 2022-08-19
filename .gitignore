@@ -1,0 +1,8 @@
+./.vscode
+./Codec/demo/build
+./Detection/demo/build
+./Transporter/demo/build
+./Control/demo/build
+./Camera/demo/build
+*build
+
