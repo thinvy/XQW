@@ -7,5 +7,5 @@ include_directories(
     ${OPENCV_INCLUDE_DIRECTORIES}
     "../include"
 )
-add_executable(demo TrackingDemo.cpp ../src/Tracking.cpp)
+add_executable(demo  ../src/Tracking.cpp ../src/Common.cpp TrackingDemo.cpp)
 target_link_libraries(demo ${OpenCV_LIBS})

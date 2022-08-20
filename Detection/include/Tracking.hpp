@@ -4,6 +4,15 @@
 #include <opencv4/opencv2/tracking.hpp>
 #include <opencv4/opencv2/opencv.hpp>
 
+struct TrackPerson{
+    cv::Point2d mat_point;
+    double timestamp;
+    int id;
+};
+
+using TrackList=std::vector<TrackPerson>;
+
+
 class Tracking
 {
 
@@ -21,6 +30,11 @@ public:
     bool reInitTracker(cv::Rect2d &detect_box, cv::Mat &frame);
 
     Tracking();
+};
+
+
+class SortTracker{
+
 };
 
 #endif
