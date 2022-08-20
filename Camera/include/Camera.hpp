@@ -4,8 +4,6 @@
 #include "opencv2/opencv.hpp"
 #include <iostream>
 
-namespace Foolish
-{
     struct CameraParam
     {
         int width = 640;
@@ -143,6 +141,5 @@ namespace Foolish
         } frame_buffers_[FREAM_BUFFER_NUM];
     };
 
-}
 
 #endif
