@@ -21,12 +21,35 @@ SOURCES += \
     display.cpp \
     loginWin.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    MainTask.cpp \
+    #Detection/src/Detection.cpp \
+    #Detection/src/ReDetect.cpp \
+    #Detection/src/TfliteWorker.cpp \
+    #Detection/src/Tracking.cpp \
+    #Detection/src/TraEstim.cpp\
+    #Detection/src/Common.cpp\
+    Codec/src/VideoReader.cpp \
+    Codec/src/VideoWriter.cpp \
+    Camera/src/Camera.cpp\
+    Transporter/src/VideoTransporter.cpp
+
 
 HEADERS += \
     display.hpp \
     loginWin.hpp \
-    mainwindow.hpp
+    mainwindow.hpp \
+    MainTask.hpp \
+    #Detection/include/Detection.hpp \
+    #Detection/include/ReDetect.hpp \
+   #Detection/include/TfliteWorker.hpp \
+   #Detection/include/Tracking.hpp \
+   #Detection/include/TraEstim.hpp\
+   #Detection/include/Common.hpp\
+    Codec/include/VideoReader.hpp \
+    Codec/include/VideoWriter.hpp \
+    Camera/include/Camera.hpp\
+    Transporter/include/VideoTransporter.hpp
 
 FORMS += \
     #logineWindow.ui \
@@ -37,21 +60,6 @@ TRANSLATIONS += \
     MainCom_zh_CN.ts\
     img/1.png \
     ../../Camera/ \
-    Detection/include/Detection.hpp \
-    Detection/include/ReDetect.hpp \
-    Detection/include/TfliteWorker.hpp \
-    Detection/include/Tracking.hpp \
-    Detection/src/Detection.cpp \
-    Detection/src/ReDetect.cpp \
-    Detection/src/TfliteWorker.cpp \
-    Detection/src/Tracking.cpp \
-    Detection/demo/** \
-    Codec/include/VideoReader.hpp \
-    Codec/include/VideoWriter.hpp \
-    Codec/src/VideoReader.cpp \
-    Codec/src/VideoWriter.cpp \
-    Codec/ReadMe.md \
-    Codec/demo/** \
 
 
 # Default rules for deployment.
@@ -59,13 +67,16 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-
-
 INCLUDEPATH += \
    # $$(SDKTARGETSYSROOT)/usr/include/opencv4 \
    # $$(SDKTARGETSYSROOT)/usr/include/tensorflow/lite/tools/make/downloads/flatbuffers/include \
    # $$(SDKTARGETSYSROOT)/usr/include/armnn \
    /usr/include/opencv4 \
+   /usr/include/gstreamer-1.0/gst \
+   /usr/include/gobject-2.0 \
+   /usr/include/glib-2.0 \
+   /usr/lib/x86_64-linux-gnu/glib-2.0/include \
+   /usr/include/gstreamer-1.0
 
 LIBS += \
     #-L $$(SDKTARGETSYSROOT)/usr/lib64 \
@@ -76,6 +87,9 @@ LIBS += \
     -lopencv_imgproc \
     -lopencv_imgcodecs \
     -lopencv_videoio \
+    -lgstreamer-1.0 \
+    -lgobject-2.0 \
+    -lglib-2.0
     #-ltensorflow-lite \
     #-ldl \
     #-lutil

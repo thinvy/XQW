@@ -3,6 +3,7 @@
 #include <opencv2/opencv.hpp>
 #include <QMainWindow>
 #include <QTimer>
+#include "MainTask.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -18,17 +19,23 @@ public:
 private:
     cv::VideoCapture cap;
     QTimer * timer;
-    void display();
+    CameraTask *camera_task;
+    QThread *camera_thread;
+    void cameraInit();
 
-signals:
-    void videoLost();
+
+    TransVideoTask *transvideo_task;
+    QThread *transvideo_thread;
+    void TransVideoInit();
+    void display(cv::Mat &frame);
 
 public slots:
     void  loginInShow();
-    void  reOpenCam();
-    void  videoErrorShow();
 
+signals:
+    void  startThread();
 private:
     Ui::MainWindow *ui;
+    // MainTask main_task;
 };
 #endif // MAINWINDOW_HPP

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.12.2, 2022-08-18T18:41:23. -->
+<!-- Written by QtCreator 4.12.2, 2022-08-21T09:57:28. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -56,8 +56,8 @@
   <variable>ProjectExplorer.Project.PluginSettings</variable>
   <valuemap type="QVariantMap">
    <valuelist type="QVariantList" key="ClangCodeModel.CustomCommandLineKey"/>
-   <value type="bool" key="ClangCodeModel.UseGlobalConfig">true</value>
-   <value type="QString" key="ClangCodeModel.WarningConfigId">Builtin.Questionable</value>
+   <value type="bool" key="ClangCodeModel.UseGlobalConfig">false</value>
+   <value type="QString" key="ClangCodeModel.WarningConfigId">{0adefd2e-f98c-49b5-8f99-3bacef923445}</value>
    <valuemap type="QVariantMap" key="ClangTools">
     <value type="bool" key="ClangTools.BuildBeforeAnalysis">true</value>
     <value type="QString" key="ClangTools.DiagnosticConfig">Builtin.DefaultTidyAndClazy</value>
@@ -306,9 +306,8 @@
     </valuelist>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">MainCom2</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/verse/workspace/RZ/FoolishCaptureNet0/XQW-RZ-G2L/QtUi/MainCom/MainCom.pro</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/verse/workspace/RZ/FoolishCaptureNet0/XQW-RZ-G2L/QtUi/MainCom/MainCom.pro</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/verse/workspace/RZ/FoolishCaptureNet0/XQW-RZ-G2L/MainCom.pro</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">/home/verse/workspace/RZ/FoolishCaptureNet0/XQW-RZ-G2L/MainCom.pro</value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
     <value type="QString" key="RunConfiguration.OverrideDebuggerStartup"></value>
