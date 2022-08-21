@@ -9,6 +9,7 @@
         int width = 640;
         int height = 480;
         int exporsure = 100;
+        int fps= 120;
     };
 
     class Camera
@@ -22,6 +23,7 @@
         virtual const unsigned char *getRGBFrame() = 0;
         virtual const unsigned char *getYUVFrame() = 0;
         virtual void getErrorMessage(std::string &error_msg) = 0;
+        virtual bool isOpened()=0;
     };
 
     class CameraCV : public Camera
@@ -37,7 +39,7 @@
             cap.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
             cap.set(cv::CAP_PROP_FRAME_WIDTH, param_.width);
             cap.set(cv::CAP_PROP_FRAME_HEIGHT, param_.height);
-            cap.set(cv::CAP_PROP_FPS, 120);
+            cap.set(cv::CAP_PROP_FPS, param_.fps);
             // cap.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
             // cap.open(camera_path);
             return cap.isOpened();
@@ -57,11 +59,15 @@
             param_.width = param.width;
             param_.height = param.height;
             param_.exporsure = param.exporsure;
+            param_.fps=param.fps;
             // cap.set(cv::CAP_PROP_FRAME_WIDTH, param.width);
             // cap.set(cv::CAP_PROP_FRAME_HEIGHT, param.height);
             // cap.set(cv::CAP_PROP_FPS, 60);
             // cap.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
             // cap.set(cv::CAP_PROP_AUTO_EXPOSURE, param.exporsure);
+        }
+        bool isOpened()override{
+            return cap.isOpened();
         }
         CameraCV() {}
 
@@ -77,6 +83,7 @@
         bool closeCamera() override;
         bool getCvFrame(cv::Mat &frame) override;
         void setCamera(CameraParam &param) override;
+        bool isOpened()override;
         CameraGS();
     };
 
@@ -94,6 +101,7 @@
             param_.width = param.width;
             param_.height = param.height;
             param_.exporsure = param.exporsure;
+            param_.fps=param.fps;
         }
         bool openCamera(std::string &camera_path) override;
         bool closeCamera() override;
@@ -117,7 +125,8 @@
         }
 
         CameraV4L2() { fd_ = -1; }
-
+        bool isOpened()override{
+        }
     private:
         std::string error_message_;
 

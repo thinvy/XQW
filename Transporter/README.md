@@ -20,7 +20,7 @@ cd bin
 # @param1 : uvc相机路径
 # @param2 : 目标主机的ip地址(可以是本机)
 # @param3 : 目标主机的端口
-./CameraDemo /dev/video0 192.168.1.126 5004
+./TransporterDemo /dev/video0 192.168.1.126 5004
 # 可以在在目标主机上(安装了gstreamer)通过以下指令预览视频流(注意端口要一样)
 gst-launch-1.0 udpsrc port=5004 caps = "application/x-rtp, media=video, clock-rate=90000, encoding-name=H264, payload=96" ! rtph264depay ! avdec_h264 ! decodebin ! xvimagesink
 ```
