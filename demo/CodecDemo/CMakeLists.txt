@@ -43,3 +43,12 @@ target_include_directories(TransporterDemo PUBLIC /usr/include/glib-2.0)
 target_include_directories(TransporterDemo PUBLIC /usr/lib/x86_64-linux-gnu/glib-2.0/include)
 target_include_directories(TransporterDemo PUBLIC ${OpenCV_INCLUDE_DIRS})
 
+# 添加receiver的demo
+add_executable(ReceiverDemo ReceiverDemo.cc VideoReceiver.cc VideoReceiver.h)
+target_link_libraries(ReceiverDemo PUBLIC ${OpenCV_LIBS})
+target_link_libraries(ReceiverDemo PUBLIC "-lgstreamer-1.0 -lgobject-2.0 -lglib-2.0")
+target_include_directories(ReceiverDemo PUBLIC /usr/include/gstreamer-1.0)
+target_include_directories(ReceiverDemo PUBLIC /usr/include/gobject-2.0)
+target_include_directories(ReceiverDemo PUBLIC /usr/include/glib-2.0)
+target_include_directories(ReceiverDemo PUBLIC /usr/lib/x86_64-linux-gnu/glib-2.0/include)
+target_include_directories(ReceiverDemo PUBLIC ${OpenCV_INCLUDE_DIRS})
