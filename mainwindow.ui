@@ -47,7 +47,7 @@
          </font>
         </property>
         <property name="text">
-         <string>相机状态</string>
+         <string> Camera</string>
         </property>
        </widget>
        <widget class="QPushButton" name="if_right">
@@ -88,7 +88,7 @@
          </font>
         </property>
         <property name="text">
-         <string>识别模块</string>
+         <string>Detection</string>
         </property>
        </widget>
        <widget class="QPushButton" name="if_right_2">
@@ -129,7 +129,7 @@
          </font>
         </property>
         <property name="text">
-         <string> 图像传输模块</string>
+         <string>   Video Trans</string>
         </property>
        </widget>
        <widget class="QPushButton" name="if_right_3">
@@ -170,7 +170,7 @@
          </font>
         </property>
         <property name="text">
-         <string> 主机通信模块</string>
+         <string>   Transporter</string>
         </property>
        </widget>
        <widget class="QPushButton" name="if_right_5">
@@ -211,7 +211,7 @@
          </font>
         </property>
         <property name="text">
-         <string>其他模块</string>
+         <string>     Other</string>
         </property>
        </widget>
        <widget class="QPushButton" name="if_right_4">
@@ -270,7 +270,7 @@
         </size>
        </property>
        <property name="text">
-        <string>重启相机</string>
+        <string>Restart Camera</string>
        </property>
       </widget>
      </item>
@@ -283,7 +283,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>重新连接主机</string>
+        <string>Reconect</string>
        </property>
       </widget>
      </item>
@@ -296,7 +296,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>重启程序</string>
+        <string>Reboot</string>
        </property>
       </widget>
      </item>
@@ -320,9 +320,9 @@
    <widget class="QLabel" name="label_state">
     <property name="geometry">
      <rect>
-      <x>690</x>
+      <x>660</x>
       <y>30</y>
-      <width>71</width>
+      <width>131</width>
       <height>31</height>
      </rect>
     </property>
@@ -332,15 +332,15 @@
      </font>
     </property>
     <property name="text">
-     <string>状态栏</string>
+     <string>Moudle  State</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_video">
     <property name="geometry">
      <rect>
-      <x>260</x>
+      <x>230</x>
       <y>30</y>
-      <width>101</width>
+      <width>201</width>
       <height>31</height>
      </rect>
     </property>
@@ -350,7 +350,7 @@
      </font>
     </property>
     <property name="text">
-     <string>视频播放区</string>
+     <string>Video Playback Area</string>
     </property>
    </widget>
    <widget class="QLabel" name="time_sum">
@@ -369,7 +369,7 @@
      </font>
     </property>
     <property name="text">
-     <string>累积运行时间</string>
+     <string>Runing Time</string>
     </property>
    </widget>
    <widget class="QLCDNumber" name="lcdNumber">
@@ -402,7 +402,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>帮助</string>
+     <string>Help</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton">
@@ -415,7 +415,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>相机模式</string>
+     <string>Camera Model</string>
     </property>
    </widget>
   </widget>

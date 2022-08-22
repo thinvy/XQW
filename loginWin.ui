@@ -22,8 +22,11 @@
      <height>41</height>
     </rect>
    </property>
+   <property name="text">
+    <string/>
+   </property>
    <property name="placeholderText">
-    <string>密码</string>
+    <string>Password</string>
    </property>
   </widget>
   <widget class="QPushButton" name="user_login">
@@ -36,7 +39,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>登录</string>
+    <string>Login</string>
    </property>
   </widget>
   <widget class="QLineEdit" name="user_number">
@@ -49,15 +52,15 @@
     </rect>
    </property>
    <property name="placeholderText">
-    <string>账户</string>
+    <string>Account</string>
    </property>
   </widget>
   <widget class="QLabel" name="name">
    <property name="geometry">
     <rect>
-     <x>60</x>
+     <x>20</x>
      <y>40</y>
-     <width>431</width>
+     <width>511</width>
      <height>81</height>
     </rect>
    </property>
@@ -67,7 +70,7 @@
     </font>
    </property>
    <property name="text">
-    <string>基于Reid的全景智能安防系统——边缘端</string>
+    <string>Panoramic intelligent security system - edge end</string>
    </property>
   </widget>
  </widget>

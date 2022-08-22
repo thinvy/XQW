@@ -4,8 +4,6 @@
 
 #include <QObject>
 #include <QOpenGLWidget>
-#include <GL/gl.h>
-#include <GL/glu.h>
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
