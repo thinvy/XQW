@@ -38,7 +38,9 @@ void MainWindow::cameraInit(){
         if(!img.empty()){
             cv::cvtColor(img, img, cv::COLOR_BGR2RGB);//图像格式转换
             QImage disImage = QImage((const unsigned char*)(img.data),img.cols,img.rows,QImage::Format_RGB888);
-            this->ui->video_play->setImage(disImage);
+            //this->ui->video_play->setImage(disImage);
+            QPixmap pix_img=QPixmap::fromImage(disImage);
+            this->ui->video_plays->setPixmap(pix_img);
         }
     });
     // reboot camera
@@ -80,6 +82,8 @@ void MainWindow::display(cv::Mat &frame){
       cv::Mat img=frame.clone();
       cv::cvtColor(img, img, cv::COLOR_BGR2RGB);//图像格式转换
       QImage disImage = QImage((const unsigned char*)(img.data),img.cols,img.rows,QImage::Format_RGB888);
-      this->ui->video_play->setImage(disImage);
+      //this->ui->video_play->setImage(disImage);
+      QPixmap pix_img=QPixmap::fromImage(disImage);
+      this->ui->video_plays->setPixmap(pix_img);
 }
 
