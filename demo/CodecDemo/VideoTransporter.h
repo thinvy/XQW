@@ -42,10 +42,10 @@ public:
      * @brief 写入视频帧
      * @param timestamp 单位秒
      */
-    int Write(const cv::Mat& frame, double timestamp) ;
+    int Write(const cv::Mat& frame) ;
 
 private:
-    int PushData2Pipeline(const cv::Mat& frame, double timestamp);
+    int PushData2Pipeline(const cv::Mat& frame);
     GstElement *pipeline_; 
     GstElement *appSrc_; 
     GstElement *queue_; 

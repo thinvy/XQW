@@ -3,14 +3,14 @@
 
 VideoTransporter::~VideoTransporter() {
     if (appSrc_) {
-        GstFlowReturn retflow;
-        g_signal_emit_by_name(appSrc_, "end-of-stream", &retflow);
-        std::cout << "EOS sended. Writing last several frame..." << std::endl;
-        g_usleep(4000000); // 等待4s，写数据
-        std::cout << "Writing Done!" << std::endl;
-        if (retflow != GST_FLOW_OK) {
-            std::cerr << "We got some error when sending eos!" << std::endl;
-        }
+        // GstFlowReturn retflow;
+        // g_signal_emit_by_name(appSrc_, "end-of-stream", &retflow);
+        // std::cout << "EOS sended. Writing last several frame..." << std::endl;
+        // g_usleep(4000000); // 等待4s，写数据
+        // std::cout << "Writing Done!" << std::endl;
+        // if (retflow != GST_FLOW_OK) {
+        //     std::cerr << "We got some error when sending eos!" << std::endl;
+        // }
     }
     if (pipeline_) {
         gst_element_set_state(pipeline_, GST_STATE_NULL);
@@ -75,7 +75,7 @@ int VideoTransporter::Open(const std::string url, const std::string port) {
     return 0;
 }
 
-int VideoTransporter::PushData2Pipeline(const cv::Mat& frame, double timestamp) {
+int VideoTransporter::PushData2Pipeline(const cv::Mat& frame) {
     GstBuffer *buffer;
     GstFlowReturn ret;
     GstMapInfo map;
@@ -94,7 +94,7 @@ int VideoTransporter::PushData2Pipeline(const cv::Mat& frame, double timestamp) 
 
     // 必须写入时间戳和每帧画面持续时间
     gst_buffer_unmap(buffer, &map);
-    GST_BUFFER_PTS(buffer) = static_cast<uint64>(timestamp * GST_SECOND);
+    // GST_BUFFER_PTS(buffer) = static_cast<uint64>(timestamp * GST_SECOND);
     // timestamp = static_cast<double>(GST_BUFFER_PTS(buffer)) / static_cast<double>(GST_SECOND);
     GST_BUFFER_DURATION(buffer) = gst_util_uint64_scale_int(1, GST_SECOND, framerate_.first / framerate_.second);
 
@@ -117,6 +117,6 @@ int VideoTransporter::PushData2Pipeline(const cv::Mat& frame, double timestamp) 
     return 0;
 }
 
-int VideoTransporter::Write(const cv::Mat& frame, double timestamp) {
-    return PushData2Pipeline(frame, timestamp);
+int VideoTransporter::Write(const cv::Mat& frame) {
+    return PushData2Pipeline(frame);
 }
