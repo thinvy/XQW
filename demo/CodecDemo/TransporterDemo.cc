@@ -33,21 +33,13 @@ void TestCameraReadVidioTransporter(std::string url, std::string outUrl, std::st
     std::cout << "transporter open finish " << std::endl;
 
     
-    int seq = 0;
-    double timestamp = 0.08;
-    while (seq++ < count) {
-        std::cout << seq << std::endl;
-
+    while (true) {
         cv::Mat frame;
         camera.read(frame);
         if (frame.empty() == true) {
             break;
         }
-        std::cout << "width : " << frame.cols << "  heigth : " << frame.rows << std::endl;
-        // std::string filename = "./bin/"  + std::to_string(seq) + ".jpg";
-        // cv::imwrite(filename, frame);
-        timestamp += 0.04;
-        transporter.Write(frame, timestamp);
+        transporter.Write(frame);
         cv::imshow("frame", frame);
         cv::waitKey(1);
     }
