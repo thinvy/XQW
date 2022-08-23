@@ -76,7 +76,6 @@ TfliteWorker::TfliteWorker(const std::string &modle_path, Delegate delegate_type
     {
         this->error_message_ = "Model data type currently not supported!";
         this->errorCallback();
-        return false;
     }
 }
 
@@ -85,10 +84,9 @@ TfliteWorker::~TfliteWorker()
     this->tflite_interpreter.reset();
 }
 
-bool TfliteWorker::inference(const cv::Mat &frame, std::vector<float> &output_tensor, int &item_stride, int &time_cost)
+bool TfliteWorker::inference(float *input_tensort, float *output_tensort)
 {
-    output_tensor.clear();
-    if (frame.empty())
+    if (input_tensort == nullptr)
     {
         this->error_message_ = WARNING_IMAGE_RETREIVAL;
         this->errorCallback();
@@ -96,23 +94,15 @@ bool TfliteWorker::inference(const cv::Mat &frame, std::vector<float> &output_te
 
     // process frame
     std::chrono::high_resolution_clock::time_point prcoss_start_time = std::chrono::high_resolution_clock::now();
-    cv::Mat resize_frame;
-    cv::resize(frame, resize_frame, cv::Size(requried_height, requried_width));
     // set input data
     if (this->requried_size_t == sizeof(float))
     {
-        /*
-         * Convert cv::Mat data type from 8-bit unsigned char to 32-bit float.
-         * The data of the image needs to be divided by 255.0f as CV_8UC3 ranges
-         * from 0 to 255, whereas CV_32FC3 ranges from 0 to 1
-         */
-        resize_frame.convertTo(resize_frame, CV_32FC3, SCALE_FACTOR_UCHAR_TO_FLOAT);
-        memcpy(tflite_interpreter->typed_tensor<float>(tflite_interpreter->inputs()[0]), resize_frame.data, resize_frame.total() * resize_frame.elemSize());
+        memcpy(tflite_interpreter->typed_tensor<float>(tflite_interpreter->inputs()[0]), input_tensort, requried_height*requried_width*requried_channels*sizeof(float));
     }
     else if (this->requried_size_t == sizeof(uint8_t))
     {
         //copy data from mat to tensor
-        memcpy(tflite_interpreter->typed_tensor<uint8_t>(tflite_interpreter->inputs()[0]), resize_frame.data, resize_frame.total() * resize_frame.elemSize());
+        memcpy(tflite_interpreter->typed_tensor<uint8_t>(tflite_interpreter->inputs()[0]), input_tensort, requried_height*requried_width*requried_channels*sizeof(float));
     }
 
     std::chrono::high_resolution_clock::time_point prcoss_stop_time = std::chrono::high_resolution_clock::now();
@@ -128,27 +118,31 @@ bool TfliteWorker::inference(const cv::Mat &frame, std::vector<float> &output_te
     }
     std::chrono::high_resolution_clock::time_point inference_stop_time = std::chrono::high_resolution_clock::now();
 // get time_cost
-    time_cost = int(std::chrono::duration_cast<std::chrono::milliseconds>(inference_stop_time - inference_start_time).count());
+    int time_cost = int(std::chrono::duration_cast<std::chrono::milliseconds>(inference_stop_time - inference_start_time).count());
 // get output_tensort
-    std::vector<int> output_tensor_count;
-    /* Cycle through each output tensor and store all data */
-    for (size_t i = 0; i < tflite_interpreter->outputs().size(); i++)
-    {
-        /* Total number of data elements */
-        int output_count = tflite_interpreter->output_tensor(i)->bytes / this->requried_size_t;
+//     std::vector<int> output_tensor_count;
+//     /* Cycle through each output tensor and store all data */
+//     for (size_t i = 0; i < tflite_interpreter->outputs().size(); i++)
+//     {
+//         /* Total number of data elements */
+//         int output_count = tflite_interpreter->output_tensor(i)->bytes / this->requried_size_t;
 
-        output_tensor_count.push_back(output_count);
+//         output_tensor_count.push_back(output_count);
 
-        for (int k = 0; k < output_count; k++)
-        {
-            float output = tflite_interpreter->typed_output_tensor<float>(i)[k];
-            output_tensor.push_back(output);
-        }
-    }
-// get item_stride
+//         for (int k = 0; k < output_count; k++)
+//         {
+//             float output = tflite_interpreter->typed_output_tensor<float>(i)[k];
+//             output_tensor.push_back(output);
+//         }
+//     }
+// // get item_stride
 
-    output_tensor_count.pop_back();
-    item_stride = output_tensor_count.pop_back();
+//     output_tensor_count.pop_back();
+
+
+//     item_stride = output_tensor_count.pop_back();
+
+    output_tensort = tflite_interpreter->typed_output_tensor<float>(0);
  
     return true;
 }

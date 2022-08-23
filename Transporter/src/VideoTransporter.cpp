@@ -23,7 +23,7 @@ int VideoTransporter::Open(const std::string url, const std::string port) {
     appSrc_       = gst_element_factory_make("appsrc", "AppSrc");
     queue_        = gst_element_factory_make("queue", "QueueWrite");
     videoConvert_ = gst_element_factory_make("videoconvert", "Videoconvert");
-    encoder_      = gst_element_factory_make("x264enc", "X264enc");
+    encoder_      = gst_element_factory_make("omxh264enc", "omxh264enc");
     capsFilter_   = gst_element_factory_make("capsfilter", "Capsfilter");
     pay_          = gst_element_factory_make("rtph264pay", "rtppay");
     sink_         = gst_element_factory_make("udpsink", "sink");
@@ -46,7 +46,7 @@ int VideoTransporter::Open(const std::string url, const std::string port) {
                                                                 "framerate", GST_TYPE_FRACTION, framerate_.first, framerate_.second, nullptr), nullptr);
 
     g_object_set(G_OBJECT(capsFilter_), "caps", gst_caps_new_simple("video/x-h264", 
-                                                                    "stream-format", G_TYPE_STRING,"avc",
+                                                                    "stream-format", G_TYPE_STRING,"byte-stream",
                                                                     "profile", G_TYPE_STRING, "main", nullptr), nullptr);
 
     g_object_set(G_OBJECT(sink_), "host", url.c_str(), NULL);
@@ -55,7 +55,7 @@ int VideoTransporter::Open(const std::string url, const std::string port) {
 	g_object_set(G_OBJECT(sink_), "async", false, NULL);
 
     // 设置视频码率
-    g_object_set(G_OBJECT(encoder_), "bitrate", 1000 + bitrate_ / 1000, nullptr);
+    // g_object_set(G_OBJECT(encoder_), "bitrate", 1000 + bitrate_ / 1000, nullptr);
 
     // Build the pipeline
     gst_bin_add_many(GST_BIN(pipeline_), appSrc_, queue_, videoConvert_, encoder_, capsFilter_, pay_, sink_, nullptr);

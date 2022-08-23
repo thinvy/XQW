@@ -8,6 +8,8 @@
 //#include <opencv4/opencv2/opencv.hpp>
 #include <QMetaType>
 
+#include "MainTask.hpp"
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -17,6 +19,14 @@ MainWindow::MainWindow(QWidget *parent)
     timer=new QTimer(this);
     cameraInit();
     TransVideoInit();
+    detectionInit();
+
+}
+
+void MainWindow::detectionInit(){
+    detect_task=new DetectTask();
+    qRegisterMetaType<cv::Mat>("cv::Mat&");
+    connect(camera_task,&CameraTask::getFrame,detect_task,&DetectTask::working);
 }
 
 

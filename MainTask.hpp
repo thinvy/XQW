@@ -10,6 +10,7 @@
 //#include "Detection/include/ReDetect.hpp"
 //#include "Detection/include/Tracking.hpp"
 //#include "Detection/include/TraEstim.hpp"
+#include "Detection/include/TfliteWorker.hpp"
 // Transporter Task
 #include "Transporter/include/VideoTransporter.hpp"
 #include <iostream>
@@ -59,5 +60,23 @@ public:
     void setCamera();
 
     void reboot();
+
+
+    //DetectTask detect_task;
+};
+
+class DetectTask : public QObject
+{
+    Q_OBJECT
+    std::shared_ptr<YoloWorker> detector;
+    bool if_open{false};
+
+public:
+    DetectTask(QObject *parent = nullptr);
+
+    void working(cv::Mat &frame);
+
+signals:
+    void setFailed(std::string &error_msg);
 };
 #endif

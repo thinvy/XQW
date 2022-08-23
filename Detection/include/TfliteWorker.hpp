@@ -21,6 +21,7 @@
 
 #include <tensorflow/lite/kernels/register.h>
 #include <opencv2/videoio.hpp>
+#include <opencv2/opencv.hpp>
 
 #include "utils.hpp"
 #include <iostream>
@@ -33,6 +34,8 @@
 #define WARNING_INVOKE "Failed to run invoke"
 #define WARNING_UNSUPPORTED_DATA_TYPE "Model data type currently not supported"
 #define SCALE_FACTOR_UCHAR_TO_FLOAT (1 / 255.0F)
+
+#define THRESHOLD 0.5
 
 enum Delegate
 {
@@ -69,7 +72,7 @@ public:
         return this->error_message_;
     }
     // errorCalback : To do (may become a log record )
-    void errorCalback()
+    void errorCallback()
     {
     }
 
@@ -102,14 +105,14 @@ public:
     bool preProcess(cv::Mat &frame, float *input_tensort)
     {
         cv::Point3f requires_size = this->tflite_worker->getSize();
-        if (frame.empty(()))
+        if (frame.empty())
         {
             return false;
         }
         cv::Mat post_frame;
-        cv::resize(frame, post_frame, cv::Size(requrirequires_size.y, requires_size.z), CV_8UC3);
-        cv::divide(255.0, post_frame, post_frame, CV_16FC3);
-        memcpy((void *)input_tensort, (void *)post_frame.data(), requires_size.x * requires_size.y * requires_size.z * sizeof(float));
+        cv::resize(frame, post_frame, cv::Size(requires_size.y, requires_size.z));
+        cv::divide(255.0, post_frame, post_frame, CV_32FC3);
+        memcpy((void *)input_tensort, (void *)post_frame.data, requires_size.x * requires_size.y * requires_size.z * sizeof(float));
     }
 
     bool postProcess(float *output_tensort, DetectbBoxList &result_list)
@@ -128,7 +131,7 @@ public:
         */
         result_list.clear();
         DetectbBoxList pre_list;
-        for (int i = 0; i < anchor_size; i += output_size)
+        for (int i = 0; i < anchor_size; i += 1)
         {
             if (output_tensort[i + 4 * anchor_size] <= conf_min)
             {
@@ -143,14 +146,15 @@ public:
         return true;
     }
 
-    bool plotBox(cv::Mat &draw_frame DetectbBoxList &result_list)
+    bool plotBox(cv::Mat &draw_frame, DetectbBoxList &result_list)
     {
+
     }
 
-    bool iou(cv::Rect2d &a, cv::Rect2d &b)
+    float iou(cv::Rect2d &a, cv::Rect2d &b)
     {
         cv::Rect2d same_rect = a & b;
-        return same_rect.area()/(a.area(+b.area()-same_rect.area());
+        return same_rect.area()/(a.area()+b.area()-same_rect.area());
     }
 
     bool nms(DetectbBoxList &pre_list, DetectbBoxList &post_list)
@@ -179,6 +183,6 @@ public:
         }
         return true;
     }
-}
+};
 
 #endif

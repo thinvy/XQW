@@ -96,3 +96,39 @@ void TransVideoTask::setTransport()
     }
     // qDebug()<<"set ";
 }
+
+DetectTask::DetectTask(QObject *parent) : QObject(parent)
+{
+    detector = std::make_shared<YoloWorker>("models/person-v5lite.tflite");
+    // setDetector();
+}
+
+void DetectTask::working(cv::Mat &frame)
+{
+    float *input_tensor; // tensor (1, 320, 320, 3)
+    bool prep = detector->preProcess(frame, input_tensor);
+    if (prep == false) 
+    {
+        std::string error_msg = "prep failed";
+        emit setFailed(error_msg);
+    }
+    float *output_tensor;
+    bool proc = detector->tflite_worker->inference(input_tensor, output_tensor);
+    if (proc == false) 
+    {
+        std::string error_msg = "proc failed";
+        emit setFailed(error_msg);
+    }
+    DetectbBoxList detect_list;
+    bool fproc = detector->postProcess(output_tensor, detect_list);
+    if (fproc == false)
+    {
+        std::string error_msg = "fproc failed";
+        emit setFailed(error_msg);
+    }
+
+    // qDebug() << "detect_list " << detect_list;
+}
+
+
+

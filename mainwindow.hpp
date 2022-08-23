@@ -29,6 +29,9 @@ private:
     void TransVideoInit();
     void display(cv::Mat &frame);
 
+    DetectTask *detect_task;
+    void detectionInit();
+
 public slots:
     void  loginInShow();
 
