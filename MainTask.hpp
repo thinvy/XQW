@@ -29,7 +29,8 @@ const std::string OUTPORT = "5004";
 class TransVideoTask : public QObject
 {
     Q_OBJECT
-    std::shared_ptr<VideoTransporter> transporter;
+    //std::shared_ptr<VideoTransporter> transporter;
+    VideoTransporter* transporter;
     bool if_open{false};
 
 public:

@@ -55,7 +55,8 @@ void CameraTask::reboot()
 
 TransVideoTask::TransVideoTask(QObject *parent) : QObject(parent)
 {
-    transporter = std::make_shared<VideoTransporter>();
+    //transporter =  new VideoTransporter;
+    //std::make_shared<VideoTransporter>();
     setTransport();
 }
 
@@ -77,6 +78,7 @@ void TransVideoTask::working(cv::Mat &frame)
 
 void TransVideoTask::setTransport()
 {
+    transporter =  new VideoTransporter();
     transporter->SetSize(CAMERA_WIDTH, CAMERA_HEIGHT);
     std::pair<int, int> frame_rate(CAMERA_FPS, 1);
     transporter->SetFramerate(frame_rate);
@@ -85,6 +87,7 @@ void TransVideoTask::setTransport()
     {
         if_open = false;
         std::string error_msg = "set failed";
+        delete transporter;
         emit setFailed(error_msg);
     }
     else
