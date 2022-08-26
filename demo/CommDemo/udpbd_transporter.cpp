@@ -46,7 +46,7 @@ bool UdpBroadcaster::open() {
             return false;
         }
 
-        return 0;
+        return true;
     }
 
     else if (state_ == "Transmit") {
