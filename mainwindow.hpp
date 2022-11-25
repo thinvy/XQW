@@ -1,9 +1,14 @@
-#ifndef MAINWINDOW_HPP
-#define MAINWINDOW_HPP
-#include <opencv2/opencv.hpp>
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
+
 #include <QMainWindow>
-#include <QTimer>
+#include <QTime>
 #include "MainTask.hpp"
+#include <QThread>
+#include <opencv2/opencv.hpp>
+#include "DrawMap/include/Map.hpp"
+
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -16,33 +21,47 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-private:
-    cv::VideoCapture cap;
-    QTimer * timer;
-    QTimer *timer2;
-    CameraTask *camera_task;
-    QThread *camera_thread;
-    void cameraInit();
-
-
-    TransVideoTask *transvideo_task;
-    QThread *transvideo_thread;
-    TransDataTask *transdata_task;
-    
-    void TransVideoInit();
-    void display(cv::Mat &frame,std::vector<TrackingBox> &boxes);
-
-    QThread *detect_thread;
-    DetectTask *detect_task;
-    void detectionInit();
-
+    int main_idex=1;
+//    std::vector<QThread*> receiver_threads_pool;
+//    std::vector<VideoReceiverTask*> receiver_tasks_pool;
+    void receiverThreadInit();
+    void messageReceiverThreadInit();
+    //void setDisplay(int i);
+    QThread* thread;
+    QThread* msg_thread;
+    VideoReceiverTask *task;
+    MessageReceiverTask *msg_task;
+    cv::VideoCapture cap0;
+    cv::VideoCapture cap1;
+    cv::VideoCapture cap2;
+    cv::VideoCapture cap3;
+    cv::VideoCapture cap4;
+    int ix=0;
+        int ix1=0;
+            int ix2=0;
+                int ix3=0;
+                int ix4=0;
+    cv::Mat stream_frame;
+    cv::Mat person1_frame;
+    cv::Mat person2_frame;
+    Map map;
+    void video1Display(cv::Mat &frame);
+    void mapUpdate(int *boxes, float *person_vector);
 public slots:
-    void  loginInShow();
+    void loginInShow();
 
-signals:
-    void  startThread();
 private:
     Ui::MainWindow *ui;
-    // MainTask main_task;
+
+
+    QTimer *timer;
+    QTimer *timer1;
+    QTimer *timer2;
+    QTimer *timer3;
+
+    cv::Point2f test_pos;
+    cv::Size test_size;
+    int test_state_0;
+    int test_state_1;
 };
-#endif // MAINWINDOW_HPP
+#endif // MAINWINDOW_H

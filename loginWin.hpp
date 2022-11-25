@@ -4,10 +4,7 @@
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
-namespace Ui
-{
-    class LoginWin;
-}
+namespace Ui { class LoginWin ; }
 QT_END_NAMESPACE
 
 class LoginWin : public QWidget
@@ -25,6 +22,6 @@ private slots:
     void login();
 
 private:
-    Ui::LoginWin *ui;
+    Ui::LoginWin  *ui;
 };
 #endif // LOGINWIN_HPP

@@ -1,0 +1,3 @@
+/home/qylann/worksapce/HoldSide/HostSide/drawMap/demo/build/CMakeFiles/rebuild_cache.dir
+/home/qylann/worksapce/HoldSide/HostSide/drawMap/demo/build/CMakeFiles/edit_cache.dir
+/home/qylann/worksapce/HoldSide/HostSide/drawMap/demo/build/CMakeFiles/DrawMapDemo.dir

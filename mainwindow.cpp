@@ -1,140 +1,238 @@
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
-#include "display.hpp"
-#include <QTime>
-#include <QObject>
-#include <thread>
-#include <QThread>
-//#include <opencv4/opencv2/opencv.hpp>
-#include <QMetaType>
-
-#include "MainTask.hpp"
+#include <opencv2/opencv.hpp>
+#include <QTimer>
+#include <unistd.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    timer = new QTimer(this);
-    timer2 = new QTimer(this);
-    cameraInit();
-    TransVideoInit();
-    detectionInit();
-    connect(timer2, &QTimer::timeout, [=]()
-            {
-                if (ui->camera_model->text() == "Camera Model")
-                {
-                    camera_task->if_direct_show = 0;
-                }
-                else if (ui->camera_model->text() == "Detect Model")
-                {
-                    camera_task->if_direct_show = 1;
-                }
-                else
-                {
-                    camera_task->if_direct_show = 2;
-                }
-                // if(camera_task->if_open==fasle){
-                //     std::string eroor="error";
-                //     emit CameraTask::videoLost(eroor);
-                // }
-            });
-    connect(ui->camera_model, &QPushButton::pressed, [=]
-            {
-                if (ui->camera_model->text() == "Camera Model")
-                {
-                    ui->camera_model->setText("Detect Model");
-                }
-                else if (ui->camera_model->text() == "Detect Model")
-                {
-                    ui->camera_model->setText("Tracking Model");
-                }
-                else
-                {
-                    ui->camera_model->setText("Camera Model");
-                }
-            });
+    timer=new QTimer(this);
+    timer1 =new QTimer(this);
+    timer2 =new QTimer(this);
+    timer3 =new QTimer(this);
+    //receiverThreadInit();
+
+//    cap0.open("/home/qylann/Videos/rz_video/1.mp4");
+    cap1.open("/home/qylann/Videos/rz_video/2.mp4");
+//    cap2.open("/home/qylann/Videos/rz_video/2.mp4");
+    cap3.open("/home/qylann/Videos/rz_video/3.avi");
+    cap4.open("/home/qylann/Videos/rz_video/1.mp4");
+    map.initMapCam();
+//    connect(timer,&QTimer::timeout,[=](){
+//        cv::Mat img;
+//        cap0>>img;
+//        while(ix<120){
+//            ix++;
+//            cap0>>img;
+//        }
+//        if(!img.empty()){
+//            cv::cvtColor(img, img, cv::COLOR_BGR2RGB);
+//            QImage disImage = QImage((const unsigned char*)(img.data),img.cols,img.rows,QImage::Format_RGB888);
+//            this->ui->main_video->setImage(disImage);
+//        }
+
+//    });
+
+    test_pos = cv::Point2f(112, 112);
+    test_size = cv::Size(25, 100);
+    test_state_0 = 0;
+    test_state_1 = 0;
+
+    connect(timer,&QTimer::timeout,[=](){
+        cv::Mat img;
+        cap1>>img;
+        while(ix1<90){
+            ix1++;
+            cap1>>img;
+            usleep(1);
+        }
+        if(!img.empty()){
+            cv::cvtColor(img, img, cv::COLOR_BGR2RGB);
+            QImage disImage = QImage((const unsigned char*)(img.data),img.cols,img.rows,QImage::Format_RGB888);
+            this->ui->video1->setImage(disImage);
+        }
+
+    });
+    connect(timer,&QTimer::timeout,[=](){
+        cv::Mat img;
+        while(ix2<105){
+            ix2++;
+            cap2>>img;
+            //usleep(1120);
+        }
+        cap2>>img;
+        if(!img.empty()){
+            cv::cvtColor(img, img, cv::COLOR_BGR2RGB);
+            QImage disImage = QImage((const unsigned char*)(img.data),img.cols,img.rows,QImage::Format_RGB888);
+            this->ui->video2->setImage(disImage);
+        }
+
+    });
+    connect(timer,&QTimer::timeout,[=](){
+        cv::Mat img;
+        while(ix2<105){
+            ix2++;
+            cap2>>img;
+            //usleep(1120);
+        }
+        cap2>>img;
+        if(!img.empty()){
+            cv::cvtColor(img, img, cv::COLOR_BGR2RGB);
+            QImage disImage = QImage((const unsigned char*)(img.data),img.cols,img.rows,QImage::Format_RGB888);
+            this->ui->openGLWidget_5->setImage(disImage);
+        }
+    });
+    connect(timer1,&QTimer::timeout,[=](){
+        cv::Mat img;
+        while(ix3<65){
+            ix3++;
+            cap2>>img;
+            //usleep(1120);
+        }
+        cap3>>img;
+        if(!img.empty()){
+            cv::cvtColor(img, img, cv::COLOR_BGR2RGB);
+            QImage disImage = QImage((const unsigned char*)(img.data),img.cols,img.rows,QImage::Format_RGB888);
+            this->ui->video3->setImage(disImage);
+            //cv::waitKey(2);
+        }
+
+    });
+    connect(timer1,&QTimer::timeout,[=](){
+        cv::Mat img;
+        cap4>>img;
+        while(ix4<0){
+            ix4++;
+            //cap3>>img;
+//            usleep(2140);
+        }
+        if(!img.empty()){
+            cv::cvtColor(img, img, cv::COLOR_BGR2RGB);
+            QImage disImage = QImage((const unsigned char*)(img.data),img.cols,img.rows,QImage::Format_RGB888);
+            this->ui->video4->setImage(disImage);
+//            cv::waitKey(2);
+          //  sleep(1);
+        }
+
+    });
+
+    connect(timer2,&QTimer::timeout,[=](){
+        cv::Mat img=map.getMap();
+//        std::cout << "test pos : " << test_pos << std::endl;
+//        std::cout << "test size : " << test_size << std::endl;
+        map.drawPoint(img, 0, test_pos, test_size);
+        map.drawMapCam(img, 0);
+
+
+//        if (test_size.width >= 60) {
+//            test_state_0 = 0;
+//        }
+//        else if (test_size.width <= 5) {
+//            test_state_0 = 1;
+//        }
+
+//        if (test_state_0 == 0) {
+//            test_size.width -= 5;
+//        }
+//        else if (test_state_0 == 1) {
+//            test_size.width += 5;
+//        }
+        if (test_pos.x >= 224) {
+            test_state_0 = 0;
+        }
+        else if (test_pos.x <= 0) {
+            test_state_0 = 1;
+        }
+
+        if (test_state_0 == 0) {
+            test_pos.x -= 15;
+        }
+        else if (test_state_0 == 1) {
+            test_pos.x += 15;
+        }
+
+        cv::resize(img,img,cv::Size(300,200));
+        //cap1>>img;
+        if(!img.empty()){
+            cv::cvtColor(img, img, cv::COLOR_BGR2RGB);
+            QImage disImage = QImage((const unsigned char*)(img.data),img.cols,img.rows,QImage::Format_RGB888);
+            this->ui->map_show->setImage(disImage);
+        }
+        timer2->stop();
+        timer2->start(100);
+
+    });
+
+
+
 }
 
-void MainWindow::detectionInit()
-{
-    detect_thread = new QThread(this);
-    detect_task = new DetectTask();
-    detect_task->moveToThread(detect_thread);
+void MainWindow::receiverThreadInit(){
     qRegisterMetaType<cv::Mat>("cv::Mat&");
-    qRegisterMetaType<std::vector<cv::Rect2d>>("std::vector<cv::Rect2d>&");
-    qRegisterMetaType<cv::Rect2d>("cv::Rect2d&");
-    qRegisterMetaType<uint8_t>("uint8_t");
-    qRegisterMetaType<uint8_t>("uint8_t&");
-    qRegisterMetaType<std::vector<TrackingBox>>("std::vector<TrackingBox>&");
-    // connect(camera_task,&CameraTask::getFrame,detect_task,&DetectTask::working);
-    connect(camera_task, &CameraTask::toDetect, detect_task, &DetectTask::working, Qt::QueuedConnection);
-    connect(detect_task, &DetectTask::toDisplay, this, &MainWindow::display, Qt::QueuedConnection);
-    connect(detect_task, &DetectTask::toSent, transdata_task, &TransDataTask::transmit, Qt::QueuedConnection);
-    detect_thread->start();
-}
-
-void MainWindow::cameraInit()
-{
-    camera_thread = new QThread(this);
-    camera_task = new CameraTask();
-    camera_task->moveToThread(camera_thread);
-    qRegisterMetaType<cv::Mat>("cv::Mat&");
-
-    // timely get frame
-    connect(timer, &QTimer::timeout, camera_task, &CameraTask::working);
-    // frame display
-    qRegisterMetaType<std::vector<TrackingBox>>("std::vector<TrackingBox>&");
-    connect(camera_task, &CameraTask::toDisplay, this, &MainWindow::display, Qt::QueuedConnection);
-
     qRegisterMetaType<std::string>("std::string&");
-    qRegisterMetaType<std::vector<cv::Rect2d>>("std::vector<cv::Rect2d>&");
-    qRegisterMetaType<bool>("bool&");
-    qRegisterMetaType<uint8_t>("uint8_t&");
-    // error display
-    connect(camera_task, &CameraTask::videoLost, this, [=]()
-            {
-                cv::Mat img;
-                img = cv::imread("/opt/gx-edge-ai-demo/img/1.png");
-                if (!img.empty())
-                {
-                    cv::resize(img, img, cv::Size(512, 512));
-                    this->ui->if_right->setText("False");
-                    cv::cvtColor(img, img, cv::COLOR_BGR2RGB); //图像格式转换
-                    QImage disImage = QImage((const unsigned char *)(img.data), img.cols, img.rows, QImage::Format_RGB888);
-                    //this->ui->video_play->setImage(disImage);
-                    QPixmap pix_img = QPixmap::fromImage(disImage);
-                    this->ui->video_plays->setPixmap(pix_img);
-                }
-            });
-    // reboot camera
-    connect(ui->reopen_cam_button, &QPushButton::pressed, [=]()
-            {
-                timer->stop();
-                camera_task->reboot();
-                this->ui->if_right->setText("True");
-                timer->start(10);
-            });
-    camera_thread->start();
-}
-
-void MainWindow::TransVideoInit()
-{
-    // init trans video Thread
-    transvideo_thread = new QThread(this);
-    transvideo_task = new TransVideoTask();
-    transvideo_task->moveToThread(transvideo_thread);
+    task=new VideoReceiverTask("5004");
+    thread =new QThread(this);
+    task->moveToThread(thread);
+    connect(timer,&QTimer::timeout,task,&VideoReceiverTask::working);
     qRegisterMetaType<cv::Mat>("cv::Mat&");
-    qRegisterMetaType<std::string>("std::string&");
-    connect(camera_task, &CameraTask::toTransport, transvideo_task, &TransVideoTask::working, Qt::QueuedConnection);
-    connect(transvideo_task, &TransVideoTask::setFailed, [=]()
-            { ui->if_right_3->setText("Failed"); });
-    //connect(detect_task, &DetectTask::toDisplay, transvideo_task, &TransVideoTask::working, Qt::QueuedConnection);
-    transdata_task = new TransDataTask(5005);
-    transdata_task->moveToThread(transvideo_thread);
-    //connect()
-
-    transvideo_thread->start();
+    connect(task,&VideoReceiverTask::getFrame,this,&MainWindow::video1Display);
+    thread->start();
 }
+
+void MainWindow::video1Display(cv::Mat &frame){
+    if(!frame.empty()){
+        stream_frame = frame.clone();
+        cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
+        QImage disImage = QImage((const unsigned char*)(frame.data),frame.cols,frame.rows,QImage::Format_RGB888);
+        this->ui->main_video->setImage(disImage);
+    }
+}
+
+void MainWindow::messageReceiverThreadInit(){
+//    qRegisterMetaType<cv::Mat>("float[]&");
+//    qRegisterMetaType<std::string>("int[]&");
+
+    msg_task = new MessageReceiverTask();
+    msg_thread = new QThread(this);
+    msg_task->moveToThread(msg_thread);
+    connect(timer, &QTimer::timeout, msg_task,& MessageReceiverTask::working);
+    connect(msg_task,&MessageReceiverTask::getMessage,this,&MainWindow::mapUpdate);
+    msg_thread->start();
+}
+
+void MainWindow::mapUpdate(int *boxes, float *person_vector) {
+    std::cout << "receive one message" << std::endl;
+    int x = boxes[0];
+    int y = boxes[1];
+    int w = boxes[2];
+    int h = boxes[3];
+
+    cv::Mat img=map.getMap();
+    map.drawPoint(img, 0, cv::Point(x+w/2, y+h/2), cv::Size(w, h));
+    map.drawMapCam(img, 0);
+    cv::resize(img,img,cv::Size(300,200));
+    if(!img.empty()){
+        cv::cvtColor(img, img, cv::COLOR_BGR2RGB);
+        QImage disImage = QImage((const unsigned char*)(img.data),img.cols,img.rows,QImage::Format_RGB888);
+        this->ui->map_show->setImage(disImage);
+    }
+
+    if (!stream_frame.empty()) {
+        cv::Mat frame_resize;
+        cv::resize(stream_frame, frame_resize, cv::Size(550, 550));
+        cv::Mat person_img(frame_resize, cv::Rect(x, y, x+w, y+h));
+        cv::resize(person_img, person_img, cv::Size(101, 192));
+//        cv::cvtColor(person_img, person_img,cv::COLOR_BGR2RGB);
+        person1_frame = person_img.clone();
+//        QImage disImage = QImage((const unsigned char*)(person_img.data),person_img.cols,person_img.rows,QImage::Format_RGB888);
+//        this->ui->main_video->setImage(disImage);
+    }
+
+
+}
+
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -142,43 +240,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::loginInShow()
 {
-
-    timer->start(10);
     this->show();
-    timer2->start(10000);
-    emit startThread();
-}
-
-void MainWindow::display(cv::Mat &frame, std::vector<TrackingBox> &boxes)
-{
-
-    cv::Mat img = frame.clone();
-    for (auto a : boxes)
-    {
-        std::string id;
-        if(a.id==-1){
-            id="";
-        }else{
-            id=std::to_string(a.id);
-        }
-        a.box&=cv::Rect2d(0,0,512,512);
-        cv::Point2d pt=a.box.tl();
-        if(pt.x<10){
-            pt.x=10;
-        }else if(pt.x>500){
-            pt.x=500;
-        }
-        if(pt.y<10){
-            pt.y=10;
-        }else if(pt.y>500){
-            pt.y=500;
-        }
-        cv::putText(img, id, a.box.tl(), 2, 2, cv::Scalar(0, 255, 0), 2);
-        cv::rectangle(img, a.box, cv::Scalar(0, 255, 0), 2);
-    }
-    cv::cvtColor(img, img, cv::COLOR_BGR2RGB); //图像格式转换
-    QImage disImage = QImage((const unsigned char *)(img.data), img.cols, img.rows, QImage::Format_RGB888);
-    //this->ui->video_play->setImage(disImage);
-    QPixmap pix_img = QPixmap::fromImage(disImage);
-    this->ui->video_plays->setPixmap(pix_img);
+    timer->start(45);
+    timer1->start(45);
+    timer2->start(40);
+    timer3->start(45);
+    receiverThreadInit();
+    messageReceiverThreadInit();
 }

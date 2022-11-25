@@ -1,6 +1,7 @@
 #ifndef DISPLAY_HPP_
 #define DISPLAY_HPP_
 
+
 #include <QObject>
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
@@ -24,7 +25,6 @@ public slots:
     void setImage(const QImage &image);
     void initTextures();
     void initShaders();
-
 private:
     QVector<QVector3D> vertices;
     QVector<QVector2D> texCoords;
@@ -32,5 +32,10 @@ private:
     QOpenGLTexture *texture;
     QMatrix4x4 projection;
 };
+
+
+
+
+
 
 #endif // DISPLAY_HPP_

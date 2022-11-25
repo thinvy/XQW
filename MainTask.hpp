@@ -1,118 +1,142 @@
 #ifndef MAINTASK_HPP_
 #define MAINTASK_HPP_
-// Camera Task
-#include "Camera/include/Camera.hpp"
-// Writer and reader Task
-#include "Codec/include/VideoReader.hpp"
-#include "Codec/include/VideoWriter.hpp"
-// Detection Task
-#include "Detection/include/Detection.hpp"
-#include "Detection/include/ReDetect.hpp"
-#include "Detection/include/Tracking.hpp"
-//#include "Detection/include/TraEstim.hpp"
-#include "Detection/include/TfliteWorker.hpp"
-#include "./Transporter/include/ResultTransporter.hpp"
-// Transporter Task
-#include "Transporter/include/VideoTransporter.hpp"
-#include <iostream>
+
+#include "./Receiver/include/VideoReceiver.hpp"
 #include <QObject>
-#include <unistd.h>
-#include <QDebug>
-#include "./Setting.hpp"
+#include <iostream>
+#include "./DrawMap/include/Map.hpp"
+#include "Receiver/include/ResultTransporter.hpp"
 
+#define WIDTH 640
+#define HEIGHT 480
+const std::string PORT = "5004";
 
-class TransVideoTask : public QObject
+class VideoReceiverTask : public QObject
 {
     Q_OBJECT
     //std::shared_ptr<VideoTransporter> transporter;
-    VideoTransporter *transporter;
 
     bool if_open{false};
 
-public:
-    TransVideoTask(QObject *parent = nullptr);
+    VideoReceiver *receiver;
 
-    void working(cv::Mat &frame);
-
-    void setTransport();
-signals:
-    void setFailed(std::string &error_msg);
-};
-
-class CameraTask : public QObject
-{
-    Q_OBJECT
-    std::shared_ptr<Camera> camera;
-signals:
-    void toTransport(cv::Mat &frame);
-
-    void videoLost(std::string &error_msg);
-
-    void toDisplay(cv::Mat &frame, std::vector<TrackingBox> &boxes);
-
-    void toDetect(cv::Mat &frame, int if_direct_show);
+    std::string port_id;
 
 public:
-    cv::Mat frame;
+    VideoReceiverTask(const std::string &port_id ="5004", QObject *parent = nullptr):QObject(parent){
+        this->port_id="5004";
+        setReceiver();
+    }
+    ~VideoReceiverTask(){
+        if(if_open){
+            delete  receiver;
+        }
+    }
 
-    int if_direct_show = 0;
+    void working()
+    {
+        if (if_open)
+        {
+            cv::Mat frame;
+            frame.create(cv::Size(WIDTH, HEIGHT), CV_8UC3);
+            receiver->Read(frame);
+            emit getFrame(frame);
+        }else{
+            setReceiver();
+        }
+    }
 
-    CameraTask(QObject *parent = nullptr);
-
-    void working();
-
-    void setCamera();
-
-    void reboot();
-public slots:
-    void directDislay();
-
-    //DetectTask detect_task;
-};
-
-class DetectTask : public QObject
-{
-    Q_OBJECT
-    std::shared_ptr<YoloWorker> detector;
-
-    std::shared_ptr<ReDetect> redetect;
-
-    std::shared_ptr<Tracking> tracking;
-
-    bool if_open{false};
-
-    int i = 0;
-
-public:
-    DetectTask(QObject *parent = nullptr);
-
-    void working(cv::Mat &frame, int if_direct_show);
-
+    void setReceiver()
+    {
+        receiver = new VideoReceiver();
+        std::pair<int, int> frame_rate{30, 1};
+        receiver->SetSize(WIDTH, HEIGHT);
+        receiver->SetFramerate(frame_rate);
+        auto ret = receiver->Open(this->port_id);
+        if (ret < 0)
+        {
+            if_open = false;
+            delete receiver;
+            std::string error_msg = "video receiver set failed";
+            std::cout<<error_msg<<std::endl;
+            emit setFailed(error_msg);
+        }
+        else
+        {
+            if_open = true;
+        }
+    }
 signals:
     void setFailed(std::string &error_msg);
 
-    void toDisplay(cv::Mat &frame, std::vector<TrackingBox> &rects);
-
-    void toSent(float *id_vector, cv::Rect2d &rect, uint8_t camera_id, uint8_t person_id);
+    void getFrame(cv::Mat &frame);
 };
 
 
-class TransDataTask : public QObject
+
+class MessageReceiverTask : public QObject
 {
     Q_OBJECT
-    std::shared_ptr<ResultTransporter> transporter;
+    //std::shared_ptr<VideoTransporter> transporter;
+
     bool if_open{false};
 
+    ResultTransporter *receiver;
+
+    std::string port_id;
+
 public:
-    TransDataTask(int port = 5005, QObject *parent = nullptr);
+    MessageReceiverTask(QObject *parent = nullptr):QObject(parent){
+        setReceiver();
+    }
+    ~MessageReceiverTask(){
+        if(if_open){
+            delete  receiver;
+        }
+    }
 
-    void transmit(float *id_vector, cv::Rect2d &rect, uint8_t camera_id, uint8_t person_id);
+    void working()
+    {
+        if (if_open)
+        {
+            float vid[256];
+            int box_rx[4];
+            uint8_t cam_id;
+            uint8_t person_id;
+            std::cout << "1" << std::endl;
+            int rx = receiver->Receive(vid, box_rx, cam_id, person_id);
+            std::cout << "2" << std::endl;
+            if (rx > 0) {
+                emit getMessage(box_rx, vid);
+            }
 
-    void receive();
+        }else{
+            setReceiver();
+        }
+    }
 
+    void setReceiver()
+    {
+        receiver = new ResultTransporter(5005);
+        if_open = true;
+        auto ret = receiver->init();
+        if (ret  == false) {
+            std::string error_msg = "message receiver set failed";
+            std::cout<<error_msg<<std::endl;
+            error_msg = receiver->error_message();
+            std::cout<<error_msg<<std::endl;
+            if_open = false;
+            delete receiver;
+            emit setFailed(error_msg);
+        }
+        else
+        {
+            if_open = true;
+        }
+    }
 signals:
-    void sentFailed(std::string &error_msg);
-
-    void toReDetect(float *id_vector, cv::Rect2d &rect, uint8_t camera_id, uint8_t person_id);
+    void setFailed(std::string &error_msg);
+    void getMessage(int *boxes, float *person_vector);
 };
+
 #endif
