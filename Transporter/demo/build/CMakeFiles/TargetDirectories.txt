@@ -1,0 +1,3 @@
+/home/qylann/worksapce/rz/XQF/Transporter/demo/build/CMakeFiles/rebuild_cache.dir
+/home/qylann/worksapce/rz/XQF/Transporter/demo/build/CMakeFiles/edit_cache.dir
+/home/qylann/worksapce/rz/XQF/Transporter/demo/build/CMakeFiles/TransporterDemo.dir

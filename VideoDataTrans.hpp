@@ -1,6 +1,0 @@
-#ifndef VIDEODATATRANS_HPP_
-#define VIDEODATATRANS_HPP_
-
-
-
-#endif
